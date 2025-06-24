@@ -5,7 +5,7 @@ const initialState = {
     id: '1',
     name: 'John Doe',
     email: 'john@example.com',
-    balance: 0,
+    balance: 0, // 초기 잔액 0원으로 설정
     avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
   },
   clickLevel: 1,
@@ -219,6 +219,38 @@ function appReducer(state, action) {
       return {
         ...state,
         user: { ...state.user, balance: state.user.balance + state.autoLevel }
+      };
+    
+    case 'RESET_GAME':
+      return {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          balance: 100000000 // Reset balance to 100,000,000원
+        }
+      };
+    
+    case 'ANDING_PURCHASE':
+      const itemCost = 100000; // 100,000원 비용 차감
+      const newBalance = state.user.balance - itemCost;
+      
+      return {
+        ...state,
+        user: { 
+          ...state.user, 
+          balance: newBalance
+        },
+        transactions: [
+          {
+            id: Date.now().toString(),
+            type: 'purchase',
+            action: 'SPECIAL_ITEM',
+            amount: -itemCost,
+            details: '??? 아이템 구매',
+            timestamp: new Date()
+          },
+          ...state.transactions
+        ]
       };
     
     default:

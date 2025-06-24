@@ -48,6 +48,11 @@ const Blackjack = () => {
   };
 
   const dealInitialCards = () => {
+    if (state.user.balance < betAmount) {
+      alert('잔액이 부족합니다.');
+      return;
+    }
+    
     const deck = createDeck();
     const newPlayerCards = [deck[0], deck[2]];
     const newDealerCards = [deck[1], deck[3]];
@@ -244,10 +249,14 @@ const Blackjack = () => {
                 </div>
                 <button
                   onClick={dealInitialCards}
-                  className="mt-4 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-                  disabled={gameStatus !== 'betting'}
+                  className={`mt-4 px-6 py-2 text-white rounded-md ${
+                    state.user.balance < betAmount || gameStatus !== 'betting'
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                  disabled={state.user.balance < betAmount || gameStatus !== 'betting'}
                 >
-                  Deal Cards
+                  {state.user.balance < betAmount ? '잔액 부족' : '시작하기'}
                 </button>
               </div>
             </div>
