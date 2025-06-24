@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useApp } from '../contexts/AppContext';
+import { useApp } from '../../contexts/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Clock, ArrowUpRight } from 'lucide-react';
 
