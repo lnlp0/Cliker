@@ -87,7 +87,7 @@ const Clicker = () => {
                   {clickEarnings.map(earning => (
                     <motion.div
                       key={earning.id}
-                      className="absolute text-yellow-300 font-bold text-2xl pointer-events-none whitespace-nowrap"
+                      className="absolute text-green-500 font-bold text-2xl pointer-events-none whitespace-nowrap"
                       style={{
                         left: `${earning.x}px`,
                         top: `${earning.y}px`,
