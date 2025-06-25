@@ -2,11 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const initialState = {
   user: {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
     balance: 0, // 초기 잔액 0원으로 설정
-    avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1'
   },
   clickLevel: 1,
   autoLevel: 0,
@@ -21,7 +17,6 @@ const initialState = {
   cart: [],
   transactions: [],
   isLoading: false,
-  casinoBalance: 1000 // Add initial casino balance
 };
 
 function appReducer(state, action) {

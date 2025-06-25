@@ -44,8 +44,8 @@ const TradeModal = ({ stock, onTrade, onClose }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md m-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto h-full w-full">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md m-0">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
             주식 시장
@@ -63,7 +63,7 @@ const TradeModal = ({ stock, onTrade, onClose }) => {
           <p className="text-2xl font-bold text-gray-900">${stock.price}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-0">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               거래 유형
