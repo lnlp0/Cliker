@@ -2,17 +2,30 @@ import React from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
+/**
+ * 포트폴리오 컴포넌트
+ * - 사용자가 보유한 주식 목록과 수익률을 표시
+ * - 종목별 상세 정보와 총 자산 가치를 보여줌
+ */
 const Portfolio = () => {
+  // 전역 상태에서 포트폴리오와 주식 데이터 가져오기
   const { state } = useApp();
   const { portfolio, stocks } = state;
 
+  // 포트폴리오에 있는 각 주식에 대한 상세 계산
   const portfolioEntries = Object.entries(portfolio.stocks).map(([stockId, position]) => {
+    // 현재 주식 정보 가져오기
     const currentStock = stocks.find(s => s.id === stockId);
+    // 현재 가격 (주식이 없으면 평균 매수가격 사용)
     const currentPrice = currentStock ? currentStock.price : position.avgPrice;
+    // 총 평가 금액 (보유 수량 × 현재 가격)
     const totalValue = position.shares * currentPrice;
+    // 총 매수 금액 (보유 수량 × 평균 매수가격)
     const totalCost = position.shares * position.avgPrice;
+    // 평가 손익 (총 평가 금액 - 총 매수 금액)
     const gain = totalValue - totalCost;
-    const gainPercent = (gain / totalCost) * 100;
+    // 수익률 (평가 손익 / 총 매수 금액 × 100)
+    const gainPercent = totalCost > 0 ? (gain / totalCost) * 100 : 0;
 
     return {
       stockId,
@@ -25,10 +38,11 @@ const Portfolio = () => {
     };
   });
 
-  const totalPortfolioValue = portfolioEntries.reduce((sum, entry) => sum + entry.totalValue, 0);
-  const totalPortfolioCost = portfolioEntries.reduce((sum, entry) => sum + entry.totalCost, 0);
-  const totalGain = totalPortfolioValue - totalPortfolioCost;
-  const totalGainPercent = totalPortfolioCost > 0 ? (totalGain / totalPortfolioCost) * 100 : 0;
+  // 포트폴리오 전체 통계 계산
+  const totalPortfolioValue = portfolioEntries.reduce((sum, entry) => sum + entry.totalValue, 0);  // 총 평가 금액
+  const totalPortfolioCost = portfolioEntries.reduce((sum, entry) => sum + entry.totalCost, 0);    // 총 매수 금액
+  const totalGain = totalPortfolioValue - totalPortfolioCost;  // 총 평가 손익
+  const totalGainPercent = totalPortfolioCost > 0 ? (totalGain / totalPortfolioCost) * 100 : 0;  // 총 수익률
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -66,8 +80,10 @@ const Portfolio = () => {
             </div>
           </div>
 
+          {/* 주식 목록 표시 */}
           <div className="space-y-4">
             {portfolioEntries.map((entry) => {
+              // 주식 정보 가져오기
               const stock = stocks.find(s => s.id === entry.stockId);
               return (
                 <div key={entry.stockId} className="p-4 border border-gray-200 rounded-lg">
@@ -84,11 +100,14 @@ const Portfolio = () => {
                     </div>
                   </div>
                   
+                  {/* 주식 상세 정보 */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
+                    {/* 왼쪽: 기본 정보 */}
                     <div>
                       <p className="text-gray-600">보유 수량: {entry.position.shares}</p>
                       <p className="text-gray-600">평균 단가: ${entry.position.avgPrice.toFixed(2)}</p>
                     </div>
+                    {/* 오른쪽: 평가 정보 */}
                     <div className="text-right">
                       <p className="text-gray-900 font-medium">
                         ${entry.totalValue.toFixed(2)}

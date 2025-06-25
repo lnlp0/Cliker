@@ -3,50 +3,77 @@ import { useApp } from '../../contexts/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Clock, ArrowUpRight } from 'lucide-react';
 
+/**
+ * 클리커 메인 컴포넌트
+ * - 화면 중앙의 버튼을 클릭하여 돈을 벌 수 있는 기능 제공
+ * - 자동 수익 발생 기능 포함
+ * - 애니메이션 효과가 있는 UI 제공
+ */
 const Clicker = () => {
+  // 전역 상태 및 디스패치 함수 가져오기
   const { state, dispatch } = useApp();
   const { user, clickLevel, autoLevel } = state;
+  
+  // 클릭 시 표시될 수익 애니메이션을 위한 상태
   const [clickEarnings, setClickEarnings] = useState([]);
   
+  /**
+   * 클릭 이벤트 핸들러
+   * - 클릭 시 수익을 증가시키고 애니메이션 효과를 생성
+   * @param {Object} e - 클릭 이벤트 객체
+   */
   const handleClick = (e) => {
+    // 클릭 수익 증가 액션 디스패치
     dispatch({ type: 'EARN_CLICK' });
     
-    // Get click position relative to the clickable area
+    // 클릭한 위치 계산 (클릭 가능 영역 기준)
     const rect = e.currentTarget.getBoundingClientRect();
-    const baseX = e.clientX - rect.left; // x position within the element
-    const baseY = e.clientY - rect.top;  // y position within the element
+    const baseX = e.clientX - rect.left; // 요소 내부의 X 좌표
+    const baseY = e.clientY - rect.top;  // 요소 내부의 Y 좌표
     
-    // Generate random offset (-30 to 30 pixels) from the click position
+    // 클릭 위치 주변에 랜덤 오프셋 생성 (-30px ~ 30px)
     const randomOffsetX = (Math.random() - 0.5) * 60;
     const randomOffsetY = (Math.random() - 0.5) * 60;
     
-    // Add new earning indicator with random position around the click
+    // 새로운 수익 표시기 생성 (클릭 위치 주변에 랜덤하게 배치)
     const newEarning = {
-      id: Date.now(),
-      amount: clickLevel,
-      x: baseX + randomOffsetX,
-      y: baseY + randomOffsetY,
+      id: Date.now(),         // 고유 ID (타임스탬프 사용)
+      amount: clickLevel,     // 클릭당 수익 금액
+      x: baseX + randomOffsetX, // X 위치 (클릭 위치 + 랜덤 오프셋)
+      y: baseY + randomOffsetY, // Y 위치 (클릭 위치 + 랜덤 오프셋)
     };
     
+    // 수익 표시기 목록에 추가
     setClickEarnings(prev => [...prev, newEarning]);
     
-    // Remove the earning indicator after animation
+    // 애니메이션 종료 후 수익 표시기 제거 (1초 후)
     setTimeout(() => {
       setClickEarnings(prev => prev.filter(earning => earning.id !== newEarning.id));
     }, 1000);
   };
 
-  // 자동 수익 (1초마다)
+  /**
+   * 자동 수익 발생 효과
+   * - autoLevel이 0보다 클 때 1초마다 자동으로 수익 발생
+   */
   useEffect(() => {
     if (autoLevel > 0) {
+      // 1초마다 자동 수익 발생
       const interval = setInterval(() => {
         dispatch({ type: 'EARN_AUTO' });
       }, 1000);
+      
+      // 컴포넌트 언마운트 시 인터벌 정리
       return () => clearInterval(interval);
     }
   }, [autoLevel, dispatch]);
 
-  // 숫자 포맷 (3자리 콤마)
+  /**
+   * 숫자 포맷팅 함수
+   * - 3자리마다 콤마를 추가하여 문자열로 변환
+   * @param {number} num - 포맷팅할 숫자
+   * @returns {string} 포맷팅된 문자열
+   */
   const formatNumber = (num) => num.toLocaleString();
 
   return (
@@ -82,34 +109,37 @@ const Clicker = () => {
                   </div>
                 </div>
                 
-                {/* Click effect */}
+                {/* 클릭 효과 애니메이션 */}
                 <AnimatePresence>
                   {clickEarnings.map(earning => (
                     <motion.div
                       key={earning.id}
                       className="absolute text-green-500 font-bold text-2xl pointer-events-none whitespace-nowrap"
                       style={{
-                        left: `${earning.x}px`,
-                        top: `${earning.y}px`,
+                        left: `${earning.x}px`,  // X 위치 설정
+                        top: `${earning.y}px`,    // Y 위치 설정
                       }}
+                      // 초기 상태
                       initial={{ 
-                        y: 0,
-                        opacity: 1,
-                        scale: 1,
-                        textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+                        y: 0,  // 시작 Y 위치
+                        opacity: 1,  // 시작 투명도
+                        scale: 1,    // 시작 크기
+                        textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'  // 텍스트 그림자
                       }}
+                      // 애니메이션 종료 상태
                       animate={{ 
-                        y: -80,
-                        opacity: 0,
-                        scale: 1.8,
-                        textShadow: '0 0 20px rgba(255, 255, 255, 1)'
+                        y: -80,  // 위로 80px 이동
+                        opacity: 0,  // 서서히 사라짐
+                        scale: 1.8,  // 크기 증가
+                        textShadow: '0 0 20px rgba(255, 255, 255, 1)'  // 그림자 강조
                       }}
+                      // 전환 효과 설정
                       transition={{ 
-                        duration: 1.2,
-                        ease: "easeOut" 
+                        duration: 1.2,  // 애니메이션 지속 시간 (1.2초)
+                        ease: "easeOut"  // 감속하는 이징 효과
                       }}
                     >
-                      +{formatNumber(earning.amount)}원
+                      +{formatNumber(earning.amount)}원  {/* 획득 금액 표시 */}
                     </motion.div>
                   ))}
                 </AnimatePresence>

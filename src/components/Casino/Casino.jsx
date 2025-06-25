@@ -4,15 +4,28 @@ import SlotMachine from './SlotMachine';
 import Blackjack from './Blackjack';
 import { Dice6, Coins } from 'lucide-react';
 
+// 카지노 메인 컴포넌트
 const Casino = () => {
   const { state } = useApp();
-  const [selectedGame, setSelectedGame] = useState('slots');
+  const [selectedGame, setSelectedGame] = useState('slots');  // 현재 선택된 게임 ID 저장
 
+  // 카지노에서 제공하는 게임 목록
   const games = [
-    { id: 'slots', name: '슬롯 머신', icon: Dice6, description: '릴을 돌려서 큰 상금을 노려보세요!' },
-    { id: 'blackjack', name: '블랙잭', icon: Coins, description: '딜러를 이기고 21에 도전하세요!' }
+    { 
+      id: 'slots', 
+      name: '슬롯 머신', 
+      icon: Dice6, 
+      description: '릴을 돌려서 큰 상금을 노려보세요!' 
+    },
+    { 
+      id: 'blackjack', 
+      name: '블랙잭', 
+      icon: Coins, 
+      description: '딜러를 이기고 21에 도전하세요!' 
+    }
   ];
 
+  // 선택된 게임 컴포넌트를 렌더링하는 함수
   const renderGame = () => {
     switch (selectedGame) {
       case 'slots':
